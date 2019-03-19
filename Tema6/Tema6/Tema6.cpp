@@ -8,13 +8,15 @@ class lista;
 class Nod
 {
 private:
-	Nod *prev_nod;
-	float valoare;
-	Nod *next_nod;
+	Nod *prev_nod_;
+	float valoare_;
+	Nod *next_nod_;
 public:
 	Nod(float value);
 	friend class lista;
-	friend ostream& operator<<(ostream& input, lista& l);
+	float get_valoare() { return valoare_; }
+	Nod* get_next_nod() { return next_nod_; }
+	Nod* get_prev_nod() { return prev_nod_; }
 };
 
 class lista
@@ -41,9 +43,9 @@ public:
 
 Nod::Nod(float value)
 {
-	prev_nod = NULL;
-	valoare = value;
-	next_nod = NULL;
+	prev_nod_ = NULL;
+	valoare_ = value;
+	next_nod_ = NULL;
 }
 
 bool lista::isEmpty()
@@ -55,10 +57,10 @@ lista lista::createCopy()
 {
 	lista l;
 	Nod *p = this->elementStart;
-	while(p!=NULL)
+	while (p != NULL)
 	{
-		l.addEnd(p->valoare);
-		p = p->next_nod;
+		l.addEnd(p->valoare_);
+		p = p->next_nod_;
 	}
 	return l;
 }
@@ -72,8 +74,8 @@ void lista::addEnd(float value)
 		elementFinal = d;
 		return;
 	}
-	elementFinal->next_nod = d;
-	d->prev_nod = elementFinal;
+	elementFinal->next_nod_ = d;
+	d->prev_nod_ = elementFinal;
 	elementFinal = d;
 }
 
@@ -93,8 +95,8 @@ void lista::addFront(float value)
 		elementFinal = d;
 		return;
 	}
-	elementStart->prev_nod = d;
-	d->next_nod = elementFinal;
+	elementStart->prev_nod_ = d;
+	d->next_nod_ = elementFinal;
 	elementFinal = d;
 }
 
@@ -119,17 +121,17 @@ istream& operator>>(istream& input, lista& l)
 ostream& operator<<(ostream& output, lista& l)
 {
 	Nod *p = l.elementStart;
-	while (p!= NULL)
+	while (p != NULL)
 	{
-		output << p->valoare << " ";
-		p = p->next_nod;
+		output << p->get_valoare() << " ";
+		p = p->get_next_nod();
 	}
 	cout << endl;
 	p = l.elementFinal;
 	while (p != NULL)
 	{
-		output << p->valoare << " ";
-		p = p->prev_nod;
+		output << p->get_valoare() << " ";
+		p = p->get_prev_nod();
 	}
 	cout << endl;
 	return output;
@@ -137,15 +139,15 @@ ostream& operator<<(ostream& output, lista& l)
 
 void lista::deleteEnd()
 {
-	if(elementFinal == elementStart)
+	if (elementFinal == elementStart)
 	{
 		elementFinal = NULL;
 		elementStart = NULL;
 		return;
 	}
 	Nod *p = elementFinal;
-	elementFinal = elementFinal->prev_nod;
-	elementFinal->next_nod = NULL;
+	elementFinal = elementFinal->prev_nod_;
+	elementFinal->next_nod_ = NULL;
 	delete(p);
 }
 
@@ -158,8 +160,8 @@ void lista::deleteFront()
 		return;
 	}
 	Nod *p = elementStart;
-	elementStart = elementStart->next_nod;
-	elementStart->prev_nod = NULL;
+	elementStart = elementStart->next_nod_;
+	elementStart->prev_nod_ = NULL;
 	delete(p);
 }
 
@@ -169,8 +171,8 @@ lista lista::operator+(lista l)
 	Nod *p = l.elementStart;
 	while (p != NULL)
 	{
-		lista_n.addEnd(p->valoare);
-		p = p->next_nod;
+		lista_n.addEnd(p->valoare_);
+		p = p->next_nod_;
 	}
 	return lista_n;
 }
