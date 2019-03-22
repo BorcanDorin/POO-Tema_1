@@ -24,6 +24,9 @@ class lista
 	Nod* element_start_;
 	Nod* element_final_;
 	lista create_copy();
+	void delete_nod(Nod * elem);
+	
+
 public:
 	lista()
 	{
@@ -35,9 +38,12 @@ public:
 	void add_front(float value);
 	void add_front(float values[]);
 	bool is_empty();
+	int get_count();
 	void delete_front();
 	void delete_end();
-	friend ostream& operator<<(ostream& input, lista& l);
+	void delete_value(const float value);
+	void delete_jump(const int step);
+	friend ostream& operator<<(ostream& output, lista& l);
 	lista operator+(lista l);
 };
 
@@ -51,6 +57,18 @@ Nod::Nod(float value)
 bool lista::is_empty()
 {
 	return this->element_start_ == NULL;
+}
+
+int lista::get_count()
+{
+	Nod *p = element_start_;
+	int s = 0;
+	while (p != NULL)
+	{
+		s++;
+		p = p->next_nod_;
+	}
+	return s;
 }
 
 lista lista::create_copy()
@@ -110,11 +128,8 @@ void lista::add_front(float values[])
 istream& operator>>(istream& input, lista& l)
 {
 	float val;
-	while (input.good())
-	{
-		input >> val;
+	while (input >> val)
 		l.add_end(val);
-	}
 	return input;
 }
 
@@ -151,6 +166,68 @@ void lista::delete_end()
 	delete(p);
 }
 
+void lista::delete_nod(Nod* elem)
+{
+	if(elem->next_nod_ == NULL)
+	{
+		delete_end();
+		return; 
+	}
+	if(elem->prev_nod_ == NULL)
+	{
+		delete_front();
+		return;
+	}
+	elem->prev_nod_->next_nod_ = elem->next_nod_;
+	elem->next_nod_->prev_nod_ = elem->prev_nod_;
+
+	delete elem;
+}
+
+void lista::delete_value(const float value)
+{
+	while (element_start_->valoare_ == value)
+		delete_front();
+	while (element_final_->valoare_ == value)
+		delete_end();
+	if (is_empty())
+		return;
+	Nod *p = element_start_->next_nod_;
+	while (p != NULL)
+	{
+		if(p->valoare_ == value)
+		{
+			p = p->prev_nod_;
+			delete_nod(p->next_nod_);
+		}
+		p = p->next_nod_;
+	}
+}
+
+void lista::delete_jump(const int step)
+{
+	if (is_empty() || step <= 0 || step > get_count())
+		return;
+	if (step == get_count())
+	{
+		delete_end();
+		return;
+	}
+	int step_count = 0;
+	Nod *p = element_start_;
+	while (p != NULL)
+	{
+		step_count++;
+		if(step_count == step)
+		{
+			p = p->prev_nod_;
+			delete_nod(p->next_nod_);
+			step_count = 0;
+		}
+		p = p->next_nod_;
+	}
+}
+
 void lista::delete_front()
 {
 	if (element_final_ == element_start_)
@@ -182,8 +259,7 @@ int main()
 	ifstream f1("date1.in");
 	lista l1;
 	f1 >> l1;
-	l1.add_end(34.5);
-	l1.delete_front();
+
 	cout << l1;
 	f1.close();
 	cout << endl << endl;
@@ -194,6 +270,18 @@ int main()
 	f2.close();
 	cout << endl << endl;
 
-	lista l = l1 + l2;
-	cout << l;
+	lista l = l2 + l1;
+	cout << l << endl;
+
+	/*
+	//test value function
+	l.delete_value(3);
+	l.delete_value(1);
+	l.delete_value(2);*/
+
+	l.delete_jump(5);
+	cout << l.get_count()<< " - ";
+	cout << l << endl;
+
+	// delete din k in k elemente
 }
