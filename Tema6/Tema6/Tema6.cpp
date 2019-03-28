@@ -141,14 +141,14 @@ ostream& operator<<(ostream& output, lista& l)
 		output << p->get_valoare() << " ";
 		p = p->get_next_nod();
 	}
-	cout << endl;
+	output << endl;
 	p = l.element_final_;
 	while (p != NULL)
 	{
 		output << p->get_valoare() << " ";
 		p = p->get_prev_nod();
 	}
-	cout << endl;
+	output << endl;
 	return output;
 }
 
